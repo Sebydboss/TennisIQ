@@ -4,73 +4,142 @@
   <meta charset="UTF-8">
   <title>SkillScope</title>
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --bg: #000;
+      --text: #fff;
+      --accent: #facc15;
+      --card: #111;
+      --muted: #9ca3af;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      transition: all 0.3s ease;
+    }
+
+    .card {
+      background: var(--card);
+      border-color: rgba(255,255,255,0.1);
+    }
+
+    .accent {
+      background: var(--accent);
+      color: black;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+  </style>
 </head>
 
-<body class="bg-black text-white">
+<body>
 
-  <!-- NAV -->
-  <div class="flex justify-between items-center px-10 py-6 border-b border-gray-800">
-    <h1 class="text-xl font-bold">SkillScope</h1>
+<!-- NAV -->
+<div class="flex justify-between items-center px-8 py-5 border-b border-gray-800">
+  <h1 class="text-xl font-bold">SkillScope</h1>
 
-    <div class="space-x-6 text-gray-400">
-      <a href="#">Home</a>
-      <a href="#">Upload</a>
-      <a href="#">About</a>
-    </div>
-  </div>
+  <!-- THEME SWITCH -->
+  <select onchange="setTheme(this.value)" class="bg-gray-900 text-white px-3 py-1 rounded">
+    <option value="grass">Grass</option>
+    <option value="clay">Clay</option>
+    <option value="stadium">Stadium Lights</option>
+    <option value="minimal">Minimal</option>
+  </select>
+</div>
 
-  <!-- HERO -->
-  <div class="text-center mt-24 px-6">
-    <h2 class="text-5xl font-bold leading-tight">
-      AI-powered skill analysis
-    </h2>
+<!-- HERO -->
+<div class="text-center mt-20 px-6">
+  <h2 class="text-5xl font-bold">Perfect your tennis technique</h2>
+  <p class="muted mt-4 max-w-xl mx-auto">
+    Upload your serve and get AI coaching feedback instantly.
+  </p>
 
-    <p class="text-gray-400 mt-4 text-lg">
-      Upload a video. Get instant feedback. Improve faster.
-    </p>
+  <button class="accent px-8 py-3 mt-8 rounded-full font-semibold">
+    Analyze My Serve
+  </button>
+</div>
 
-    <button class="mt-8 px-8 py-3 bg-white text-black rounded-full font-semibold hover:scale-105 transition">
-      Get Started
+<!-- UPLOAD -->
+<div class="mt-16 flex justify-center">
+  <div class="card border p-8 rounded-xl w-96 text-center">
+
+    <p class="mb-4 muted">Upload your tennis video</p>
+
+    <input type="file" id="videoInput" accept="video/*">
+
+    <button onclick="previewVideo()" class="accent px-4 py-2 mt-4 rounded">
+      Preview
     </button>
+
+    <video id="preview" class="mt-4 w-full hidden rounded"></video>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="mt-16 grid md:grid-cols-3 gap-6 px-10 text-center">
+
+  <div class="card border p-6 rounded-xl">
+    Serve Analysis
   </div>
 
-  <!-- UPLOAD BOX -->
-  <div class="mt-20 flex flex-col items-center">
-
-    <div class="border border-gray-700 p-10 rounded-xl w-96 text-center">
-      <p class="mb-4 text-gray-300">Upload your video</p>
-
-      <input type="file" id="videoInput" class="mb-4">
-
-      <button onclick="previewVideo()"
-        class="bg-gray-800 px-4 py-2 rounded hover:bg-gray-700">
-        Preview
-      </button>
-
-      <video id="preview" class="mt-4 w-full hidden" controls></video>
-    </div>
-
+  <div class="card border p-6 rounded-xl">
+    Pro Comparison
   </div>
 
-  <!-- RESULTS -->
-  <div class="mt-16 text-center px-6">
-    <h3 class="text-2xl font-semibold">AI Feedback</h3>
-    <p id="result" class="text-gray-400 mt-2">
-      Upload a video to get analysis
-    </p>
+  <div class="card border p-6 rounded-xl">
+    Instant Feedback
   </div>
 
-  <script>
-    function previewVideo() {
-      const file = document.getElementById("videoInput").files[0];
-      const video = document.getElementById("preview");
+</div>
 
-      if (!file) return;
+<script>
+function previewVideo() {
+  const file = document.getElementById("videoInput").files[0];
+  const video = document.getElementById("preview");
+  if (!file) return;
 
-      video.src = URL.createObjectURL(file);
-      video.classList.remove("hidden");
-    }
-  </script>
+  video.src = URL.createObjectURL(file);
+  video.classList.remove("hidden");
+}
+
+// THEME SYSTEM
+function setTheme(theme) {
+  const root = document.documentElement;
+
+  if (theme === "grass") {
+    root.style.setProperty("--bg", "#0b2e13");
+    root.style.setProperty("--accent", "#22c55e");
+    root.style.setProperty("--card", "#0f3d1f");
+    root.style.setProperty("--muted", "#b7f7c1");
+  }
+
+  if (theme === "clay") {
+    root.style.setProperty("--bg", "#2b1b14");
+    root.style.setProperty("--accent", "#f97316");
+    root.style.setProperty("--card", "#3a241b");
+    root.style.setProperty("--muted", "#f5c6a5");
+  }
+
+  if (theme === "stadium") {
+    root.style.setProperty("--bg", "#050505");
+    root.style.setProperty("--accent", "#3b82f6");
+    root.style.setProperty("--card", "#111827");
+    root.style.setProperty("--muted", "#93c5fd");
+  }
+
+  if (theme === "minimal") {
+    root.style.setProperty("--bg", "#ffffff");
+    root.style.setProperty("--text", "#000000");
+    root.style.setProperty("--accent", "#000000");
+    root.style.setProperty("--card", "#f3f3f3");
+    root.style.setProperty("--muted", "#555");
+  }
+}
+</script>
 
 </body>
 </html>
