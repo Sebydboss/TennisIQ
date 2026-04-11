@@ -135,11 +135,18 @@ function previewVideo() {
 function setTheme(theme) {
   const root = document.documentElement;
 
+  /* default text fix helper */
+  const setText = (c) => root.style.setProperty("--text", c);
+  const setHeading = (c) => root.style.setProperty("--heading", c);
+
   if (theme === "stadium") {
     root.style.setProperty("--bg", "#050505");
     root.style.setProperty("--accent", "#a3ff12");
     root.style.setProperty("--card", "#111111");
-    root.style.setProperty("--muted", "#9ca3af");
+    root.style.setProperty("--muted", "#b3b3b3");
+
+    setText("#ffffff");
+    setHeading("#ffffff");
   }
 
   if (theme === "grass") {
@@ -147,21 +154,29 @@ function setTheme(theme) {
     root.style.setProperty("--accent", "#22c55e");
     root.style.setProperty("--card", "#0f3d1f");
     root.style.setProperty("--muted", "#b7f7c1");
+
+    setText("#ffffff");
+    setHeading("#eaffea");
   }
 
   if (theme === "clay") {
-    root.style.setProperty("--bg", "#2b1b14");
-    root.style.setProperty("--accent", "#f97316");
-    root.style.setProperty("--card", "#3a241b");
-    root.style.setProperty("--muted", "#f5c6a5");
+    root.style.setProperty("--bg", "#2a140b");
+    root.style.setProperty("--accent", "#ff7a18");
+    root.style.setProperty("--card", "#3a1c10");
+    root.style.setProperty("--muted", "#ffd1b3");
+
+    setText("#fff3e6");
+    setHeading("#ffb066"); /* 🔥 orange headings fix */
   }
 
   if (theme === "minimal") {
     root.style.setProperty("--bg", "#ffffff");
-    root.style.setProperty("--text", "#000000");
     root.style.setProperty("--accent", "#000000");
-    root.style.setProperty("--card", "#f3f3f3");
+    root.style.setProperty("--card", "#f2f2f2");
     root.style.setProperty("--muted", "#555");
+
+    setText("#000000");     /* ⚪ fix readability */
+    setHeading("#000000");
   }
 }
 </script>
