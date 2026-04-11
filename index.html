@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>SkillScope</title>
+  <title>Tennis IQ</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
     :root {
-      --bg: #000;
-      --text: #fff;
-      --accent: #facc15;
-      --card: #111;
+      --bg: #050505;
+      --text: #ffffff;
+      --accent: #a3ff12;
+      --card: #111111;
       --muted: #9ca3af;
     }
 
@@ -18,20 +18,32 @@
       background: var(--bg);
       color: var(--text);
       transition: all 0.3s ease;
+      font-family: ui-sans-serif, system-ui;
     }
 
     .card {
       background: var(--card);
-      border-color: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
     }
 
     .accent {
       background: var(--accent);
       color: black;
+      font-weight: 600;
     }
 
     .muted {
       color: var(--muted);
+    }
+
+    button {
+      transition: all 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
     }
   </style>
 </head>
@@ -40,60 +52,73 @@
 
 <!-- NAV -->
 <div class="flex justify-between items-center px-8 py-5 border-b border-gray-800">
-  <h1 class="text-xl font-bold">SkillScope</h1>
+  <h1 class="text-xl font-bold tracking-wide">Tennis IQ</h1>
 
-  <!-- THEME SWITCH -->
   <select onchange="setTheme(this.value)" class="bg-gray-900 text-white px-3 py-1 rounded">
+    <option value="stadium">Stadium Lights</option>
     <option value="grass">Grass</option>
     <option value="clay">Clay</option>
-    <option value="stadium">Stadium Lights</option>
     <option value="minimal">Minimal</option>
   </select>
 </div>
 
 <!-- HERO -->
 <div class="text-center mt-20 px-6">
-  <h2 class="text-5xl font-bold">Perfect your tennis technique</h2>
-  <p class="muted mt-4 max-w-xl mx-auto">
-    Upload your serve and get AI coaching feedback instantly.
+  <h2 class="text-5xl font-bold leading-tight">
+    AI-powered tennis intelligence
+  </h2>
+
+  <p class="muted mt-4 max-w-xl mx-auto text-lg">
+    Upload your serve. Get instant breakdowns on form, timing, and power—like a real coach in your pocket.
   </p>
 
-  <button class="accent px-8 py-3 mt-8 rounded-full font-semibold">
+  <button class="accent px-8 py-3 mt-8 rounded-full">
     Analyze My Serve
   </button>
 </div>
 
 <!-- UPLOAD -->
 <div class="mt-16 flex justify-center">
-  <div class="card border p-8 rounded-xl w-96 text-center">
+  <div class="card p-8 w-96 text-center">
 
     <p class="mb-4 muted">Upload your tennis video</p>
 
     <input type="file" id="videoInput" accept="video/*">
 
-    <button onclick="previewVideo()" class="accent px-4 py-2 mt-4 rounded">
-      Preview
+    <button onclick="previewVideo()" class="accent px-5 py-2 mt-4 rounded-full">
+      Preview Serve
     </button>
 
-    <video id="preview" class="mt-4 w-full hidden rounded"></video>
+    <video id="preview" class="mt-4 w-full hidden rounded-lg"></video>
   </div>
 </div>
 
 <!-- FEATURES -->
 <div class="mt-16 grid md:grid-cols-3 gap-6 px-10 text-center">
 
-  <div class="card border p-6 rounded-xl">
-    Serve Analysis
+  <div class="card p-6">
+    🎯 Serve Breakdown
+    <p class="muted mt-2 text-sm">Toss, contact point, swing path</p>
   </div>
 
-  <div class="card border p-6 rounded-xl">
-    Pro Comparison
+  <div class="card p-6">
+    🧠 Pro Comparison
+    <p class="muted mt-2 text-sm">See how you compare to elite players</p>
   </div>
 
-  <div class="card border p-6 rounded-xl">
-    Instant Feedback
+  <div class="card p-6">
+    ⚡ Instant Feedback
+    <p class="muted mt-2 text-sm">Get coaching in seconds</p>
   </div>
 
+</div>
+
+<!-- RESULTS -->
+<div class="mt-16 text-center px-6 mb-20">
+  <h3 class="text-2xl font-semibold">AI Coach Feedback</h3>
+  <p id="result" class="muted mt-2">
+    Upload a serve to get your breakdown
+  </p>
 </div>
 
 <script>
@@ -106,9 +131,16 @@ function previewVideo() {
   video.classList.remove("hidden");
 }
 
-// THEME SYSTEM
+/* THEME SYSTEM */
 function setTheme(theme) {
   const root = document.documentElement;
+
+  if (theme === "stadium") {
+    root.style.setProperty("--bg", "#050505");
+    root.style.setProperty("--accent", "#a3ff12");
+    root.style.setProperty("--card", "#111111");
+    root.style.setProperty("--muted", "#9ca3af");
+  }
 
   if (theme === "grass") {
     root.style.setProperty("--bg", "#0b2e13");
@@ -122,13 +154,6 @@ function setTheme(theme) {
     root.style.setProperty("--accent", "#f97316");
     root.style.setProperty("--card", "#3a241b");
     root.style.setProperty("--muted", "#f5c6a5");
-  }
-
-  if (theme === "stadium") {
-    root.style.setProperty("--bg", "#050505");
-    root.style.setProperty("--accent", "#3b82f6");
-    root.style.setProperty("--card", "#111827");
-    root.style.setProperty("--muted", "#93c5fd");
   }
 
   if (theme === "minimal") {
