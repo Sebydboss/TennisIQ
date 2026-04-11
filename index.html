@@ -1,1 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SkillScope</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
 
+<body class="bg-black text-white">
+
+  <!-- NAV -->
+  <div class="flex justify-between items-center px-10 py-6 border-b border-gray-800">
+    <h1 class="text-xl font-bold">SkillScope</h1>
+
+    <div class="space-x-6 text-gray-400">
+      <a href="#">Home</a>
+      <a href="#">Upload</a>
+      <a href="#">About</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="text-center mt-24 px-6">
+    <h2 class="text-5xl font-bold leading-tight">
+      AI-powered skill analysis
+    </h2>
+
+    <p class="text-gray-400 mt-4 text-lg">
+      Upload a video. Get instant feedback. Improve faster.
+    </p>
+
+    <button class="mt-8 px-8 py-3 bg-white text-black rounded-full font-semibold hover:scale-105 transition">
+      Get Started
+    </button>
+  </div>
+
+  <!-- UPLOAD BOX -->
+  <div class="mt-20 flex flex-col items-center">
+
+    <div class="border border-gray-700 p-10 rounded-xl w-96 text-center">
+      <p class="mb-4 text-gray-300">Upload your video</p>
+
+      <input type="file" id="videoInput" class="mb-4">
+
+      <button onclick="previewVideo()"
+        class="bg-gray-800 px-4 py-2 rounded hover:bg-gray-700">
+        Preview
+      </button>
+
+      <video id="preview" class="mt-4 w-full hidden" controls></video>
+    </div>
+
+  </div>
+
+  <!-- RESULTS -->
+  <div class="mt-16 text-center px-6">
+    <h3 class="text-2xl font-semibold">AI Feedback</h3>
+    <p id="result" class="text-gray-400 mt-2">
+      Upload a video to get analysis
+    </p>
+  </div>
+
+  <script>
+    function previewVideo() {
+      const file = document.getElementById("videoInput").files[0];
+      const video = document.getElementById("preview");
+
+      if (!file) return;
+
+      video.src = URL.createObjectURL(file);
+      video.classList.remove("hidden");
+    }
+  </script>
+
+</body>
+</html>
