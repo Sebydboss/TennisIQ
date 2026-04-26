@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Results</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-black text-white p-10">
+
+<h1 class="text-3xl font-bold mb-6">Your Analysis</h1>
+
+<div id="results" class="grid md:grid-cols-3 gap-6"></div>
+
+<script>
+async function loadResults() {
+  const res = await fetch("http://localhost:8000/results");
+  const data = await res.json();
+
+  document.getElementById("results").innerHTML = `
+    <div class="bg-gray-900 p-6 rounded">🎯 ${data.technique}</div>
+    <div class="bg-gray-900 p-6 rounded">⚡ ${data.power}</div>
+    <div class="bg-gray-900 p-6 rounded">🧠 ${data.fixes}</div>
+  `;
+}
+
+loadResults();
+</script>
+
+</body>
+</html>
