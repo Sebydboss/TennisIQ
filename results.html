@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tennis IQ — Your Results</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #060608;
+      --text: #f0f0f0;
+      --accent: #a3ff12;
+      --accent-dim: rgba(163,255,18,0.12);
+      --card: #0f0f12;
+      --muted: #6b7280;
+      --heading: #ffffff;
+      --border: rgba(255,255,255,0.07);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      transition: background 0.5s, color 0.5s;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    h1, h2, h3 { font-family: 'Bebas Neue', sans-serif; color: var(--heading); letter-spacing: 0.03em; transition: color 0.5s; }
+    .muted { color: var(--muted); transition: color 0.5s; }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(12px);
+      background: rgba(6,6,8,0.85);
+    }
+
+    .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.1em; color: var(--heading); }
+    .nav-logo span { color: var(--accent); }
+
+    .back-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      text-decoration: none;
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.1); }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      transition: background 0.5s, border-color 0.3s, transform 0.2s, box-shadow 0.2s;
+    }
+
+    /* HERO */
+    .page-hero {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 70px 24px 40px;
+      animation: fadeUp 0.5s ease both;
+    }
+    .page-hero h2 { font-size: clamp(2.5rem, 6vw, 4.5rem); margin-bottom: 10px; }
+
+    /* RATING CARD */
+    .rating-card {
+      position: relative;
+      z-index: 1;
+      max-width: 520px;
+      margin: 0 auto 24px;
+      padding: 36px 32px;
+      text-align: center;
+      animation: fadeUp 0.5s 0.1s ease both;
+    }
+
+    .rating-ring {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 3px solid var(--accent);
+      background: var(--accent-dim);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .rating-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.8rem;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .rating-denom { font-size: 0.75rem; color: var(--muted); }
+
+    .pro-comp {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* RESULT CARDS */
+    .results-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+      animation: fadeUp 0.5s 0.2s ease both;
+    }
+
+    .result-card { padding: 28px 24px; }
+    .result-card:hover { transform: translateY(-4px); box-shadow: 0 14px 40px rgba(0,0,0,0.4); }
+
+    .result-tag {
+      display: inline-block;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid rgba(163,255,18,0.2);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
+
+    .result-icon { font-size: 1.6rem; margin-bottom: 10px; }
+    .result-text { font-size: 0.9rem; line-height: 1.65; color: var(--text); }
+
+    /* CTA */
+    .cta-section {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 40px 24px 80px;
+      animation: fadeUp 0.5s 0.3s ease both;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      background: var(--accent);
+      color: #000;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 14px 36px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.15s;
+      letter-spacing: 0.02em;
+    }
+    .cta-btn:hover { opacity: 0.88; transform: translateY(-2px); }
+
+    /* Error / loading */
+    .state-msg {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 80px 24px;
+    }
+
+    /* minimal overrides */
+    body.theme-minimal nav { background: rgba(245,245,240,0.92); }
+    body.theme-minimal .nav-logo { color: #111; }
+    body.theme-minimal .back-btn { color: #111; }
+    body.theme-minimal h2 { color: #111; }
+    body.theme-minimal .result-text { color: #222; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Tennis<span>IQ</span></div>
+  <a href="/index.html" class="back-btn">← New Analysis</a>
+</nav>
+
+<!-- LOADING -->
+<div id="loading" class="state-msg muted">Loading your results…</div>
+
+<!-- ERROR -->
+<div id="errorState" class="state-msg hidden">
+  <p style="color:#ff6b6b; font-size:1.1rem;">⚠️ No results found.</p>
+  <p class="muted mt-2 text-sm" style="margin-top:8px;">Go back and analyze a video first.</p>
+  <a href="/index.html" class="back-btn" style="display:inline-block; margin-top:20px;">← Go Back</a>
+</div>
+
+<!-- RESULTS -->
+<div id="resultsPage" class="hidden">
+
+  <div class="page-hero">
+    <h2>YOUR SERVE ANALYSIS</h2>
+    <p class="muted">Here's what Claude found in your footage</p>
+  </div>
+
+  <!-- Rating -->
+  <div class="card rating-card" id="ratingCard" style="padding: 36px 32px; max-width:520px; margin: 0 auto 24px; text-align:center;">
+    <div class="rating-ring">
+      <span class="rating-num" id="ratingNum">—</span>
+      <span class="rating-denom">/10</span>
+    </div>
+    <h3 style="font-size:1.6rem;">Overall Form Rating</h3>
+    <p class="pro-comp" id="proComp">—</p>
+  </div>
+
+  <!-- 3 result cards -->
+  <div class="results-grid">
+
+    <div class="card result-card">
+      <div class="result-icon">🎯</div>
+      <div class="result-tag">TECHNIQUE</div>
+      <p class="result-text" id="technique">—</p>
+    </div>
+
+    <div class="card result-card">
+      <div class="result-icon">⚡</div>
+      <div class="result-tag">POWER</div>
+      <p class="result-text" id="power">—</p>
+    </div>
+
+    <div class="card result-card">
+      <div class="result-icon">🔧</div>
+      <div class="result-tag">FIX THIS FIRST</div>
+      <p class="result-text" id="fixes">—</p>
+    </div>
+
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <a href="/index.html" class="cta-btn">🎾 Analyze Another Serve</a>
+  </div>
+
+</div>
+
+<script>
+  window.addEventListener("load", () => {
+    // Restore theme
+    const theme = localStorage.getItem("tennisTheme") || "stadium";
+    applyTheme(theme);
+
+    // Load results that were saved by index.html after Claude responded
+    const raw = localStorage.getItem("tennisResults");
+    document.getElementById("loading").classList.add("hidden");
+
+    if (!raw) {
+      document.getElementById("errorState").classList.remove("hidden");
+      return;
+    }
+
+    try {
+      const data = JSON.parse(raw);
+      document.getElementById("technique").textContent = data.technique || "—";
+      document.getElementById("power").textContent     = data.power     || "—";
+      document.getElementById("fixes").textContent     = data.fixes     || "—";
+      document.getElementById("ratingNum").textContent = data.rating    || "—";
+      document.getElementById("proComp").textContent   = data.proComparison || "";
+      document.getElementById("resultsPage").classList.remove("hidden");
+    } catch {
+      document.getElementById("errorState").classList.remove("hidden");
+    }
+  });
+
+  // Same theme system as index.html
+  const themes = {
+    stadium: { bg: "#060608", accent: "#a3ff12", "accent-dim": "rgba(163,255,18,0.12)", card: "#0f0f12", muted: "#6b7280", heading: "#ffffff", border: "rgba(255,255,255,0.07)", text: "#f0f0f0" },
+    grass:   { bg: "#081a0e", accent: "#22c55e", "accent-dim": "rgba(34,197,94,0.1)",   card: "#0c2414", muted: "#86efac", heading: "#f0fff4", border: "rgba(255,255,255,0.08)", text: "#dcfce7" },
+    clay:    { bg: "#1c0d06", accent: "#ff7a18", "accent-dim": "rgba(255,122,24,0.1)",  card: "#261008", muted: "#c4856a", heading: "#fff5f0", border: "rgba(255,255,255,0.08)", text: "#ffe8d6" },
+    minimal: { bg: "#f5f5f0", accent: "#111111", "accent-dim": "rgba(0,0,0,0.06)",      card: "#ffffff",  muted: "#888888", heading: "#111111", border: "rgba(0,0,0,0.09)",     text: "#222222" }
+  };
+
+  function applyTheme(theme) {
+    const root = document.documentElement;
+    document.body.className = "theme-" + theme;
+    const t = themes[theme];
+    for (const [k, v] of Object.entries(t)) root.style.setProperty("--" + k, v);
+  }
+</script>
+</body>
+</html>
