@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tennis IQ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #060608;
+      --text: #f0f0f0;
+      --accent: #a3ff12;
+      --accent-dim: rgba(163,255,18,0.12);
+      --card: #0f0f12;
+      --card-hover: #151518;
+      --muted: #6b7280;
+      --heading: #ffffff;
+      --border: rgba(255,255,255,0.07);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      transition: background 0.5s ease, color 0.5s ease;
+      overflow-x: hidden;
+    }
+
+    /* Subtle noise texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      color: var(--heading);
+      letter-spacing: 0.03em;
+      transition: color 0.5s;
+    }
+
+    .muted { color: var(--muted); transition: color 0.5s; }
+
+    /* NAV */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      z-index: 10;
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      background: rgba(6,6,8,0.85);
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: 0.1em;
+      color: var(--heading);
+    }
+
+    .nav-logo span { color: var(--accent); }
+
+    .theme-select {
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      outline: none;
+    }
+    .theme-select:hover { background: rgba(255,255,255,0.09); }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 100px 24px 60px;
+    }
+
+    .hero-eyebrow {
+      display: inline-block;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid rgba(163,255,18,0.25);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+
+    .hero h2 {
+      font-size: clamp(3rem, 8vw, 6.5rem);
+      line-height: 0.92;
+      margin-bottom: 24px;
+    }
+
+    .hero h2 em {
+      font-style: normal;
+      color: var(--accent);
+      -webkit-text-stroke: 0px;
+    }
+
+    .hero-sub {
+      max-width: 480px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    /* CARD */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      transition: background 0.5s, border-color 0.3s, transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { border-color: rgba(255,255,255,0.13); }
+
+    /* UPLOAD SECTION */
+    .upload-section {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      padding: 0 24px;
+    }
+
+    .upload-card {
+      width: 100%;
+      max-width: 520px;
+      padding: 32px;
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 14px;
+      padding: 44px 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.25s, background 0.25s;
+    }
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    .upload-icon { font-size: 2.8rem; line-height: 1; margin-bottom: 12px; }
+    .upload-title { font-weight: 600; font-size: 1rem; margin-bottom: 4px; }
+    .upload-sub { font-size: 0.82rem; color: var(--muted); }
+
+    #videoInput { display: none; }
+
+    #preview {
+      width: 100%;
+      border-radius: 12px;
+      margin-top: 16px;
+      display: none;
+    }
+
+    /* STATUS */
+    .status-bar {
+      margin-top: 14px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      display: none;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid rgba(163,255,18,0.2);
+    }
+    .status-bar.show { display: block; }
+    .status-bar.error {
+      background: rgba(255,60,60,0.1);
+      color: #ff6b6b;
+      border-color: rgba(255,60,60,0.2);
+    }
+
+    /* BUTTON */
+    .analyze-btn {
+      width: 100%;
+      margin-top: 16px;
+      padding: 14px;
+      background: var(--accent);
+      color: #000;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      letter-spacing: 0.02em;
+    }
+    .analyze-btn:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+    .analyze-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+    /* FEATURES */
+    .features {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      padding: 48px 40px 80px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      padding: 28px 24px;
+      cursor: default;
+    }
+    .feature-card:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(0,0,0,0.4); }
+    .feature-icon { font-size: 1.8rem; margin-bottom: 14px; }
+    .feature-card h3 { font-size: 1.3rem; margin-bottom: 8px; }
+    .feature-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+    /* Minimal theme text overrides */
+    body.theme-minimal nav { background: rgba(245,245,240,0.9); }
+    body.theme-minimal .nav-logo { color: #111; }
+    body.theme-minimal .theme-select { color: #111; }
+    body.theme-minimal .upload-title { color: #111; }
+    body.theme-minimal h2 { color: #111; }
+
+    /* Page fade-in */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero { animation: fadeUp 0.6s ease both; }
+    .upload-section { animation: fadeUp 0.6s 0.15s ease both; }
+    .features { animation: fadeUp 0.6s 0.3s ease both; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Tennis<span>IQ</span></div>
+  <select class="theme-select" onchange="setTheme(this.value)">
+    <option value="stadium">🌙 Stadium</option>
+    <option value="grass">🌿 Grass</option>
+    <option value="clay">🏔 Clay</option>
+    <option value="minimal">☀️ Minimal</option>
+  </select>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">AI TENNIS COACH</div>
+  <h2>ANALYZE<br>YOUR <em>SERVE</em></h2>
+  <p class="hero-sub">Upload a video clip. Claude breaks down your technique frame by frame and tells you exactly what to fix.</p>
+</div>
+
+<!-- UPLOAD -->
+<div class="upload-section">
+  <div class="card upload-card">
+    <p class="section-label">UPLOAD YOUR SERVE VIDEO</p>
+
+    <div class="upload-zone" id="uploadZone"
+         onclick="document.getElementById('videoInput').click()"
+         ondragover="dragOver(event)"
+         ondragleave="dragLeave()"
+         ondrop="dropFile(event)">
+      <div class="upload-icon">🎾</div>
+      <p class="upload-title" id="uploadLabel">Click to upload or drag & drop</p>
+      <p class="upload-sub">MP4, MOV, AVI — any serve angle works</p>
+      <input type="file" id="videoInput" accept="video/*" onchange="handleUpload()">
+    </div>
+
+    <video id="preview" controls></video>
+
+    <div id="statusBar" class="status-bar"></div>
+
+    <button class="analyze-btn" id="analyzeBtn" onclick="analyzeVideo()" disabled>
+      Analyze My Serve →
+    </button>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="features">
+  <div class="card feature-card">
+    <div class="feature-icon">🎯</div>
+    <h3>Serve Breakdown</h3>
+    <p>Stance, toss, swing path, and contact point — all analyzed from your footage.</p>
+  </div>
+  <div class="card feature-card">
+    <div class="feature-icon">⚡</div>
+    <h3>Instant Feedback</h3>
+    <p>Specific, actionable coaching notes in seconds — not vague generic tips.</p>
+  </div>
+  <div class="card feature-card">
+    <div class="feature-icon">🧠</div>
+    <h3>Pro Comparison</h3>
+    <p>See how your mechanics compare to ATP and WTA professionals.</p>
+  </div>
+</div>
+
+<script>
+  // ─── File handling ──────────────────────────────────────────────────────
+  let selectedFile = null;
+
+  function handleUpload(fileOverride) {
+    const file = fileOverride || document.getElementById("videoInput").files[0];
+    if (!file) return;
+    selectedFile = file;
+
+    const video = document.getElementById("preview");
+    video.src = URL.createObjectURL(file);
+    video.style.display = "block";
+
+    document.getElementById("uploadLabel").textContent = "✅ " + file.name;
+    document.getElementById("analyzeBtn").disabled = false;
+    setStatus("Video ready — press Analyze when you're set.");
+  }
+
+  function dragOver(e) {
+    e.preventDefault();
+    document.getElementById("uploadZone").classList.add("drag-over");
+  }
+  function dragLeave() {
+    document.getElementById("uploadZone").classList.remove("drag-over");
+  }
+  function dropFile(e) {
+    e.preventDefault();
+    dragLeave();
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith("video/")) handleUpload(file);
+  }
+
+  // ─── Status bar ─────────────────────────────────────────────────────────
+  function setStatus(msg, isError = false) {
+    const bar = document.getElementById("statusBar");
+    bar.textContent = msg;
+    bar.classList.add("show");
+    bar.classList.toggle("error", isError);
+  }
+
+  // ─── Main analyze function ──────────────────────────────────────────────
+  async function analyzeVideo() {
+    if (!selectedFile) { setStatus("Upload a video first.", true); return; }
+
+    const btn = document.getElementById("analyzeBtn");
+    btn.disabled = true;
+    btn.textContent = "Extracting frame…";
+    setStatus("📸 Grabbing a frame from your video…");
+
+    try {
+      // Step 1: Pull one frame out of the video as a JPEG image
+      // We do this in the browser using a hidden canvas element
+      const frameBase64 = await extractFrame(selectedFile);
+
+      btn.textContent = "Sending to Claude…";
+      setStatus("🤖 Claude is analyzing your serve…");
+
+      // Step 2: Send the frame to OUR Vercel function (not directly to Claude)
+      // The Vercel function adds the secret API key and forwards it
+      const response = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageBase64: frameBase64 })
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || "Server error " + response.status);
+      }
+
+      const analysis = await response.json();
+
+      // Step 3: Save results and go to results page
+      localStorage.setItem("tennisResults", JSON.stringify(analysis));
+      window.location.href = "/results.html";
+
+    } catch (err) {
+      console.error(err);
+      setStatus("❌ " + err.message, true);
+      btn.disabled = false;
+      btn.textContent = "Analyze My Serve →";
+    }
+  }
+
+  // ─── Frame extractor ────────────────────────────────────────────────────
+  // Pulls one frame from the video file using a hidden canvas.
+  // No backend needed for this part — browsers can do it natively.
+  function extractFrame(videoFile) {
+    return new Promise((resolve, reject) => {
+      const vid = document.createElement("video");
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      vid.src = URL.createObjectURL(videoFile);
+      vid.muted = true;
+      vid.crossOrigin = "anonymous";
+
+      vid.addEventListener("loadeddata", () => {
+        // Seek to 30% into the video — usually a good moment in a serve
+        vid.currentTime = Math.min(1.5, vid.duration * 0.3);
+      });
+
+      vid.addEventListener("seeked", () => {
+        canvas.width = vid.videoWidth;
+        canvas.height = vid.videoHeight;
+        ctx.drawImage(vid, 0, 0);
+        // toDataURL gives us "data:image/jpeg;base64,XXXX..."
+        // We split on the comma to get just the base64 part
+        const base64 = canvas.toDataURL("image/jpeg", 0.85).split(",")[1];
+        resolve(base64);
+      });
+
+      vid.addEventListener("error", () => reject(new Error("Could not load video file")));
+      vid.load();
+    });
+  }
+
+  // ─── Theme system ───────────────────────────────────────────────────────
+  const themes = {
+    stadium: { bg: "#060608", accent: "#a3ff12", "accent-dim": "rgba(163,255,18,0.12)", card: "#0f0f12", "card-hover": "#151518", muted: "#6b7280", heading: "#ffffff", border: "rgba(255,255,255,0.07)", text: "#f0f0f0" },
+    grass:   { bg: "#081a0e", accent: "#22c55e", "accent-dim": "rgba(34,197,94,0.1)",   card: "#0c2414", "card-hover": "#102e1a", muted: "#86efac", heading: "#f0fff4", border: "rgba(255,255,255,0.08)", text: "#dcfce7" },
+    clay:    { bg: "#1c0d06", accent: "#ff7a18", "accent-dim": "rgba(255,122,24,0.1)",  card: "#261008", "card-hover": "#30140a", muted: "#c4856a", heading: "#fff5f0", border: "rgba(255,255,255,0.08)", text: "#ffe8d6" },
+    minimal: { bg: "#f5f5f0", accent: "#111111", "accent-dim": "rgba(0,0,0,0.06)",      card: "#ffffff",  "card-hover": "#f9f9f6", muted: "#888888", heading: "#111111", border: "rgba(0,0,0,0.09)",     text: "#222222" }
+  };
+
+  function setTheme(theme) {
+    const root = document.documentElement;
+    document.body.className = "theme-" + theme;
+    const t = themes[theme];
+    for (const [k, v] of Object.entries(t)) root.style.setProperty("--" + k, v);
+    localStorage.setItem("tennisTheme", theme);
+  }
+
+  window.addEventListener("load", () => {
+    const saved = localStorage.getItem("tennisTheme") || "stadium";
+    document.querySelector(".theme-select").value = saved;
+    setTheme(saved);
+  });
+</script>
+</body>
+</html>
