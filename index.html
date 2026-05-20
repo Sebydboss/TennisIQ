@@ -379,7 +379,6 @@
 
     try {
       // Step 1: Pull one frame out of the video as a JPEG image
-      // We do this in the browser using a hidden canvas element
       const frameBase64 = await extractFrame(selectedFile);
 
       btn.textContent = "Sending to Claude…";
@@ -413,8 +412,7 @@
   }
 
   // ─── Frame extractor ────────────────────────────────────────────────────
-  // Pulls one frame from the video file using a hidden canvas.
-  // No backend needed for this part — browsers can do it natively.
+  // Pulls one frame from the video file using a hidden canvas
   function extractFrame(videoFile) {
     return new Promise((resolve, reject) => {
       const vid = document.createElement("video");
@@ -426,7 +424,7 @@
       vid.crossOrigin = "anonymous";
 
       vid.addEventListener("loadeddata", () => {
-        // Seek to 30% into the video — usually a good moment in a serve
+        // Seek to 30% into the video
         vid.currentTime = Math.min(1.5, vid.duration * 0.3);
       });
 
@@ -435,7 +433,6 @@
         canvas.height = vid.videoHeight;
         ctx.drawImage(vid, 0, 0);
         // toDataURL gives us "data:image/jpeg;base64,XXXX..."
-        // We split on the comma to get just the base64 part
         const base64 = canvas.toDataURL("image/jpeg", 0.85).split(",")[1];
         resolve(base64);
       });
@@ -462,7 +459,7 @@
   }
 
   window.addEventListener("load", () => {
-    const saved = localStorage.getItem("tennisTheme") || "stadium";
+    const saved = localStorage.getItem("tennisTheme") || "grass";
     document.querySelector(".theme-select").value = saved;
     setTheme(saved);
   });
